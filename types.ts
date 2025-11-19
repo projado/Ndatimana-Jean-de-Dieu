@@ -28,9 +28,21 @@ export interface CountryInfo {
   proofOfFunds: string;
 }
 
+export interface VisaDetails {
+  country: string;
+  visaType: string;
+  applicationFee: string;
+  processingTime: string;
+  financialRequirements: string;
+  documents: string[];
+  embassyLocation: string;
+  healthRequirements: string;
+}
+
 export enum ViewState {
   HOME = 'HOME',
   SCHOLARSHIPS = 'SCHOLARSHIPS',
   DESTINATIONS = 'DESTINATIONS',
-  CONTACT = 'CONTACT'
+  CONTACT = 'CONTACT',
+  VIDEO = 'VIDEO'
 }

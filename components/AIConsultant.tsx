@@ -69,9 +69,9 @@ export const AIConsultant: React.FC = () => {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Chat Window */}
       {isOpen && (
-        <div className="bg-white w-[350px] md:w-[400px] h-[500px] rounded-2xl shadow-2xl flex flex-col mb-4 border border-slate-200 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 w-[350px] md:w-[400px] h-[500px] rounded-2xl shadow-2xl flex flex-col mb-4 border border-slate-200 dark:border-slate-700 overflow-hidden transition-colors duration-300">
           {/* Header - Red Brick Theme */}
-          <div className="bg-red-900 p-4 text-white flex justify-between items-center">
+          <div className="bg-red-900 dark:bg-red-950 p-4 text-white flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="bg-white/20 p-2 rounded-full">
                 <Bot size={20} />
@@ -87,7 +87,7 @@ export const AIConsultant: React.FC = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -97,7 +97,7 @@ export const AIConsultant: React.FC = () => {
                   className={`max-w-[80%] p-3 rounded-2xl text-sm shadow-sm ${
                     msg.role === 'user'
                       ? 'bg-red-800 text-white rounded-br-none'
-                      : 'bg-white text-slate-700 border border-slate-200 rounded-bl-none'
+                      : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded-bl-none'
                   }`}
                 >
                   <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
@@ -106,7 +106,7 @@ export const AIConsultant: React.FC = () => {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white p-3 rounded-2xl rounded-bl-none border border-slate-200 flex items-center gap-2">
+                <div className="bg-white dark:bg-slate-700 p-3 rounded-2xl rounded-bl-none border border-slate-200 dark:border-slate-600 flex items-center gap-2">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -117,7 +117,7 @@ export const AIConsultant: React.FC = () => {
           </div>
 
           {/* Input */}
-          <div className="p-4 bg-white border-t border-slate-100">
+          <div className="p-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -125,7 +125,7 @@ export const AIConsultant: React.FC = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder="Ask about visas, universities..."
-                className="flex-1 p-2 bg-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-800 border-none"
+                className="flex-1 p-2 bg-slate-100 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-800 border-none dark:text-white"
               />
               <button
                 onClick={handleSend}

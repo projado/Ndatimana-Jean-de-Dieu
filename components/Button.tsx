@@ -14,11 +14,11 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const baseStyles = "px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed";
   
-  // Updated to Red Brick Theme
+  // Updated to Red Brick Theme with Dark Mode Support
   const variants = {
     primary: "bg-red-800 hover:bg-red-900 text-white shadow-lg shadow-red-900/20",
     secondary: "bg-amber-600 hover:bg-amber-700 text-white shadow-lg shadow-amber-600/20",
-    outline: "border-2 border-red-800 text-red-800 hover:bg-red-50"
+    outline: "border-2 border-red-800 text-red-800 hover:bg-red-50 dark:border-red-400 dark:text-red-400 dark:hover:bg-red-900/10"
   };
 
   return (

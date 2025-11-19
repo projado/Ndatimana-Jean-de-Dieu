@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, GraduationCap, MapPin, BookOpen, Calendar, DollarSign, Filter } from 'lucide-react';
+import { Search, GraduationCap, MapPin, BookOpen, Calendar, DollarSign, Filter, ExternalLink } from 'lucide-react';
 import { findScholarshipsAI } from '../services/geminiService';
 import { Scholarship } from '../types';
 import { Button } from './Button';
@@ -48,33 +48,34 @@ export const ScholarshipFinder: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold text-slate-900 mb-4">Smart Scholarship Finder</h2>
-        <p className="text-slate-600">Tell us what you want to study, and our AI will scan opportunities suitable for Rwandan students.</p>
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Smart Scholarship Finder</h2>
+        <p className="text-slate-600 dark:text-slate-400">Tell us what you want to study, and our AI will scan opportunities suitable for Rwandan students.</p>
       </div>
 
-      {/* Search Form */}
-      <form onSubmit={handleSearch} className="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-red-800 mb-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Search Form - Now more colorful */}
+      <form onSubmit={handleSearch} className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border-t-4 border-indigo-600 mb-10 relative overflow-hidden transition-colors duration-300">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 dark:bg-indigo-900/20 rounded-bl-full -z-0"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-              <BookOpen size={16} className="text-red-800" /> Field of Study
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <BookOpen size={16} className="text-indigo-600 dark:text-indigo-400" /> Field of Study
             </label>
             <input
               type="text"
               required
               placeholder="e.g., Public Health, Engineering"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-800 focus:outline-none transition-all"
+              className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-600 dark:focus:ring-indigo-500 focus:outline-none transition-all"
               value={formData.field}
               onChange={(e) => setFormData({ ...formData, field: e.target.value })}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-              <GraduationCap size={16} className="text-red-800" /> Degree Level
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <GraduationCap size={16} className="text-indigo-600 dark:text-indigo-400" /> Degree Level
             </label>
             <select
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-800 focus:outline-none transition-all"
+              className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-600 dark:focus:ring-indigo-500 focus:outline-none transition-all"
               value={formData.level}
               onChange={(e) => setFormData({ ...formData, level: e.target.value })}
             >
@@ -86,32 +87,34 @@ export const ScholarshipFinder: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-              <MapPin size={16} className="text-red-800" /> Preferred Country
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <MapPin size={16} className="text-indigo-600 dark:text-indigo-400" /> Preferred Country
             </label>
             <input
               type="text"
               required
               placeholder="e.g., Canada, China, UK"
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-800 focus:outline-none transition-all"
+              className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-600 dark:focus:ring-indigo-500 focus:outline-none transition-all"
               value={formData.country}
               onChange={(e) => setFormData({ ...formData, country: e.target.value })}
             />
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
-          <Button type="submit" isLoading={loading} className="w-full md:w-auto">
+        <div className="mt-6 flex justify-end relative z-10">
+          <Button type="submit" isLoading={loading} className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 border-none text-white">
             <Search size={18} /> Find Scholarships
           </Button>
         </div>
       </form>
 
-      {/* Filters Bar - Shown only when results exist */}
+      {/* Filters Bar */}
       {results.length > 0 && (
-        <div className="bg-red-50/50 border border-red-100 p-4 rounded-xl mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between animate-in fade-in slide-in-from-top-4">
-          <div className="flex items-center gap-2 text-red-900 font-semibold">
-            <Filter size={20} />
+        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between animate-in fade-in slide-in-from-top-4 shadow-sm transition-colors duration-300">
+          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-semibold">
+            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
+              <Filter size={18} />
+            </div>
             <span>Refine Results:</span>
           </div>
           <div className="flex gap-3 w-full sm:w-auto">
@@ -119,7 +122,7 @@ export const ScholarshipFinder: React.FC = () => {
                <select
                  value={filterType}
                  onChange={(e) => setFilterType(e.target.value)}
-                 className="w-full p-2.5 pl-3 pr-8 rounded-lg border border-red-200 bg-white text-slate-700 text-sm focus:ring-2 focus:ring-red-800 outline-none appearance-none cursor-pointer hover:border-red-300 transition-colors"
+                 className="w-full p-2.5 pl-3 pr-8 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white text-sm focus:ring-2 focus:ring-indigo-600 outline-none cursor-pointer hover:border-indigo-300 transition-colors"
                >
                  <option value="All">All Funding Types</option>
                  <option value="Full">Full Funding</option>
@@ -131,7 +134,7 @@ export const ScholarshipFinder: React.FC = () => {
                <select
                  value={filterCountry}
                  onChange={(e) => setFilterCountry(e.target.value)}
-                 className="w-full p-2.5 pl-3 pr-8 rounded-lg border border-red-200 bg-white text-slate-700 text-sm focus:ring-2 focus:ring-red-800 outline-none appearance-none cursor-pointer hover:border-red-300 transition-colors"
+                 className="w-full p-2.5 pl-3 pr-8 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-white text-sm focus:ring-2 focus:ring-indigo-600 outline-none cursor-pointer hover:border-indigo-300 transition-colors"
                >
                  <option value="All">All Countries</option>
                  {availableCountries.map(c => (
@@ -143,51 +146,104 @@ export const ScholarshipFinder: React.FC = () => {
         </div>
       )}
 
-      {/* Results Grid */}
+      {/* Results Grid - Colorful Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredResults.map((item, idx) => (
-          <div key={idx} className="bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-shadow border border-slate-100 border-l-4 border-l-red-800 flex flex-col h-full">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="text-xl font-bold text-red-900 flex-1 mr-2">{item.name}</h3>
-            </div>
-            
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className={`text-xs font-bold px-2 py-1 rounded-md ${item.fundingType === 'Full' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                {item.fundingType} Funding
-              </span>
-              <span className="text-xs font-bold px-2 py-1 rounded-md bg-slate-100 text-slate-700 flex items-center gap-1">
-                <MapPin size={12} /> {item.country}
-              </span>
-            </div>
+        {filteredResults.map((item, idx) => {
+          const isFull = item.fundingType === 'Full';
+          return (
+            <div key={idx} className={`rounded-xl p-6 shadow-sm hover:shadow-xl transition-all border-2 flex flex-col h-full relative overflow-hidden group ${
+              isFull 
+                ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/50 hover:border-amber-300' 
+                : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700'
+            }`}>
+              {/* Decorative Blob */}
+              <div className={`absolute -right-8 -top-8 w-24 h-24 rounded-full opacity-20 ${isFull ? 'bg-amber-400' : 'bg-blue-400'}`}></div>
 
-            <div className="space-y-3 text-sm text-slate-600 flex-1">
-              <div className="flex items-start gap-2">
-                <DollarSign className="text-emerald-600 shrink-0" size={18} />
-                <span className="font-medium text-emerald-700">{item.amount}</span>
+              <div className="flex justify-between items-start mb-3 relative z-10">
+                <h3 className={`text-xl font-bold flex-1 mr-2 leading-tight ${isFull ? 'text-amber-900 dark:text-amber-400' : 'text-slate-800 dark:text-white'}`}>
+                  {item.name}
+                </h3>
               </div>
-              <div className="flex items-start gap-2">
-                <Calendar className="text-orange-500 shrink-0" size={18} />
-                <span>Deadline: {item.deadline}</span>
+              
+              {/* Badges */}
+              <div className="flex flex-wrap gap-2 mb-4 relative z-10">
+                <span className={`text-xs font-bold px-2 py-1 rounded-md border ${
+                  isFull 
+                    ? 'bg-white dark:bg-amber-900/50 text-amber-700 dark:text-amber-200 border-amber-200 dark:border-amber-800 shadow-sm' 
+                    : 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-800'
+                }`}>
+                  {item.fundingType} Funding
+                </span>
+                <span className="text-xs font-bold px-2 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 flex items-center gap-1">
+                  <MapPin size={12} /> {item.country}
+                </span>
               </div>
-              <div className="border-t border-slate-100 pt-3 mt-3">
-                <p className="font-semibold text-slate-900 mb-1">Key Requirements:</p>
-                <ul className="list-disc list-inside space-y-1 text-slate-500 text-xs">
-                  {item.requirements.slice(0, 3).map((req, rIdx) => (
-                    <li key={rIdx}>{req}</li>
-                  ))}
-                </ul>
+
+              <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400 flex-1 relative z-10">
+                <div className="flex items-start gap-2">
+                  <div className={`p-1 rounded-full ${isFull ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400'}`}>
+                    <DollarSign size={14} />
+                  </div>
+                  <span className="font-medium text-slate-700 dark:text-slate-200">{item.amount}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                   <div className={`p-1 rounded-full ${isFull ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400' : 'bg-orange-100 dark:bg-orange-900/50 text-orange-500 dark:text-orange-400'}`}>
+                    <Calendar size={14} />
+                  </div>
+                  <span>Deadline: {item.deadline}</span>
+                </div>
+                <div className="border-t border-slate-200/50 dark:border-slate-700/50 pt-3 mt-3">
+                  <p className="font-semibold text-slate-900 dark:text-white mb-1">Key Requirements:</p>
+                  <ul className="list-none space-y-1.5 text-slate-500 dark:text-slate-400 text-xs">
+                    {item.requirements.slice(0, 3).map((req, rIdx) => (
+                      <li key={rIdx} className="flex items-start gap-2">
+                         <span className={`mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0 ${isFull ? 'bg-amber-500' : 'bg-blue-400'}`}></span>
+                         {req}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
+
+              {/* Action Button */}
+              {item.link ? (
+                <a 
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`mt-4 w-full py-2 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors ${
+                    isFull 
+                      ? 'bg-amber-200 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 hover:bg-amber-300 dark:hover:bg-amber-900/60' 
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600'
+                  }`}
+                >
+                  Apply Now <ExternalLink size={14} />
+                </a>
+              ) : (
+                <button 
+                  disabled 
+                  className={`mt-4 w-full py-2 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors opacity-50 cursor-not-allowed ${
+                    isFull 
+                      ? 'bg-amber-200 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200' 
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200'
+                  }`}
+                >
+                  Apply Now <ExternalLink size={14} />
+                </button>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {!loading && hasSearched && filteredResults.length === 0 && (
-        <div className="text-center text-slate-500 py-10 bg-slate-50 rounded-xl border border-slate-200 border-dashed">
+        <div className="text-center text-slate-500 dark:text-slate-400 py-16 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 border-dashed">
+          <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 dark:text-slate-500">
+            <Search size={32} />
+          </div>
           {results.length > 0 ? (
             <>
-              <p className="text-lg font-medium text-slate-700">No matches for these filters.</p>
+              <p className="text-lg font-medium text-slate-700 dark:text-slate-200">No matches for these filters.</p>
               <p className="text-sm mt-1">Try changing the filter settings above.</p>
             </>
           ) : (
