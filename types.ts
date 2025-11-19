@@ -1,3 +1,4 @@
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
@@ -39,10 +40,29 @@ export interface VisaDetails {
   healthRequirements: string;
 }
 
+export interface SATQuestion {
+  id: string;
+  passage?: string; // For Reading/Writing
+  questionText: string;
+  options: string[];
+  correctAnswerIndex: number;
+  explanation: string;
+  topic: string;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+}
+
+export interface TestConfig {
+  testId: number;
+  section: 'Math' | 'ReadingWriting';
+  module: 1 | 2;
+  difficulty?: 'Easy' | 'Hard'; // For Module 2 adaptive
+}
+
 export enum ViewState {
   HOME = 'HOME',
   SCHOLARSHIPS = 'SCHOLARSHIPS',
   DESTINATIONS = 'DESTINATIONS',
   CONTACT = 'CONTACT',
-  VIDEO = 'VIDEO'
+  VIDEO = 'VIDEO',
+  SAT_PREP = 'SAT_PREP'
 }

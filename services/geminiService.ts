@@ -1,5 +1,6 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
-import { Scholarship, VisaDetails } from "../types";
+import { Scholarship, VisaDetails, SATQuestion, TestConfig } from "../types";
 
 const apiKey = process.env.API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
@@ -134,7 +135,6 @@ export const findVisaRequirementsAI = async (country: string): Promise<VisaDetai
 
 export const generateCampusVideo = async (prompt: string): Promise<string | null> => {
   try {
-    // Use a fresh instance to ensure the latest API key is used
     const freshAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
     let operation = await freshAi.models.generateVideos({
       model: 'veo-3.1-fast-generate-preview',
@@ -147,7 +147,7 @@ export const generateCampusVideo = async (prompt: string): Promise<string | null
     });
 
     while (!operation.done) {
-      await new Promise(resolve => setTimeout(resolve, 5000)); // 5s poll interval
+      await new Promise(resolve => setTimeout(resolve, 2000));
       operation = await freshAi.operations.getVideosOperation({ operation: operation });
     }
 
@@ -159,5 +159,97 @@ export const generateCampusVideo = async (prompt: string): Promise<string | null
   } catch (error) {
     console.error("Video Generation Error:", error);
     throw error;
+  }
+};
+
+export const generateSATPracticeSet = async (
+  config: TestConfig,
+  count: number
+): Promise<SATQuestion[]> => {
+  try {
+    const difficultyContext = config.module === 2 
+      ? (config.difficulty === 'Hard' ? "HARDER (600-800 range)" : "EASIER (200-550 range)")
+      : "MIXED (Baseline Difficulty)";
+
+    let orderingInstruction = "";
+    
+    if (config.section === 'ReadingWriting') {
+      orderingInstruction = `
+      ORDERING INSTRUCTIONS (Official Bluebook Structure):
+      1. First ~20% of questions: "Words in Context" (Vocabulary).
+      2. Next ~30% of questions: "Craft and Structure" & "Information and Ideas" (Main Idea, Purpose, Inference, Cross-Text connections).
+      3. Next ~30% of questions: "Standard English Conventions" (Grammar, Punctuation, Verb Tense).
+      4. Final ~20% of questions: "Expression of Ideas" (Rhetorical Synthesis/Student Notes, Transitions).
+      `;
+    } else {
+      orderingInstruction = `
+      ORDERING INSTRUCTIONS (Official Bluebook Structure):
+      1. Start with simpler Algebra and Heart of Algebra questions.
+      2. Move to Problem-Solving and Data Analysis (Tables, scatterplots).
+      3. Move to Advanced Math (Non-linear equations, functions).
+      4. End with Geometry and Trigonometry.
+      5. Mix "Student Produced Response" (Grid-in) types towards the end.
+      `;
+    }
+
+    const prompt = `Generate exactly ${count} unique Digital SAT practice questions for:
+    Section: ${config.section}
+    Module: ${config.module}
+    Difficulty Level: ${difficultyContext}
+
+    ${orderingInstruction}
+
+    CRITICAL BLUEBOOK CONTENT GUIDELINES:
+    1. **Reading & Writing**:
+       - **Words in Context**: Short text with a blank. Options are vocabulary words.
+       - **Text Structure/Purpose**: Academic texts (science, humanities) or literary narratives (older English style).
+       - **Standard English Conventions**: Sentences with blanks for punctuation/grammar.
+       - **Rhetorical Synthesis**: "While researching a topic, a student has taken the following notes..." -> Question: "The student wants to emphasize..."
+       - Ensure 'passage' is populated for EVERY question.
+
+    2. **Math**:
+       - Use authentic SAT topics: Linear equations, systems of equations, quadratics, exponential growth, circle theorems, sohcahtoa, probability.
+       - Ensure clear steps in 'explanation'.
+       - Use Unicode (x², √, π, ≤) for math symbols.
+
+    OUTPUT FORMAT:
+    Return a Strict JSON Array of objects. Do not wrap in markdown code blocks.
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        systemInstruction: "You are the College Board Bluebook Exam Engine. You generate authentic, high-fidelity SAT questions ordered exactly as they appear on the real test.",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              id: { type: Type.STRING },
+              passage: { type: Type.STRING, description: "The reading passage, data table description, or student notes" },
+              questionText: { type: Type.STRING },
+              options: { 
+                type: Type.ARRAY, 
+                items: { type: Type.STRING } 
+              },
+              correctAnswerIndex: { type: Type.INTEGER },
+              explanation: { type: Type.STRING, description: "Detailed explanation of why the correct answer is right and others are wrong." },
+              topic: { type: Type.STRING },
+              difficulty: { type: Type.STRING, enum: ["Easy", "Medium", "Hard"] }
+            },
+            required: ["id", "questionText", "options", "correctAnswerIndex", "explanation", "topic", "difficulty"]
+          }
+        }
+      }
+    });
+
+    const text = response.text;
+    if (!text) return [];
+    return JSON.parse(text) as SATQuestion[];
+  } catch (error) {
+    console.error("SAT Gen Error:", error);
+    return [];
   }
 };

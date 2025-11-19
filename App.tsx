@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, Book, GraduationCap, Phone, Mail, Facebook, Instagram, Award, Users, CheckCircle2, File, ChevronRight, MapPin, Plus, Minus, ArrowRight, Star, Moon, Sun, Youtube, Landmark, Video } from 'lucide-react';
+import { Menu, X, Globe, Book, GraduationCap, Phone, Mail, Facebook, Instagram, Award, Users, CheckCircle2, File, ChevronRight, MapPin, Plus, Minus, ArrowRight, Star, Moon, Sun, Youtube, Landmark, Video, Trophy } from 'lucide-react';
 import { ViewState } from './types';
 import { AIConsultant } from './components/AIConsultant';
 import { ScholarshipFinder } from './components/ScholarshipFinder';
 import { Destinations } from './components/Destinations';
 import { Testimonials } from './components/Testimonials';
 import { CampusVideo } from './components/CampusVideo';
+import { SATPrep } from './components/SATPrep';
 import { Button } from './components/Button';
 
 // Custom Brand Logo Component
@@ -145,6 +146,7 @@ const App: React.FC = () => {
     { label: 'Home', view: ViewState.HOME },
     { label: 'Destinations & Visas', view: ViewState.DESTINATIONS },
     { label: 'Scholarships', view: ViewState.SCHOLARSHIPS },
+    { label: 'SAT Prep', view: ViewState.SAT_PREP },
     { label: 'AI Campus Preview', view: ViewState.VIDEO },
     { label: 'Contact', view: ViewState.CONTACT },
   ];
@@ -187,6 +189,8 @@ const App: React.FC = () => {
         return <Destinations />;
       case ViewState.VIDEO:
         return <CampusVideo />;
+      case ViewState.SAT_PREP:
+        return <SATPrep />;
       case ViewState.CONTACT:
         return (
           <div className="max-w-2xl mx-auto py-16 px-4">
@@ -251,9 +255,9 @@ const App: React.FC = () => {
                         <Users size={18} />
                         Find Scholarships
                       </Button>
-                      <Button onClick={() => setCurrentView(ViewState.DESTINATIONS)} variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white hover:text-indigo-900 gap-2 backdrop-blur-sm">
-                        <Globe size={18} />
-                        Explore Visas
+                      <Button onClick={() => setCurrentView(ViewState.SAT_PREP)} variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white hover:text-indigo-900 gap-2 backdrop-blur-sm">
+                        <Trophy size={18} />
+                        Ace the SAT
                       </Button>
                     </div>
                   </div>
