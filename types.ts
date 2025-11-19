@@ -12,6 +12,8 @@ export interface Scholarship {
   deadline: string;
   requirements: string[];
   link?: string;
+  country: string;
+  fundingType: 'Full' | 'Partial';
 }
 
 export interface CountryInfo {
@@ -21,6 +23,9 @@ export interface CountryInfo {
   popularDegrees: string[];
   avgCost: string;
   visaDifficulty: 'Easy' | 'Moderate' | 'Hard';
+  visaType: string;
+  processingTime: string;
+  proofOfFunds: string;
 }
 
 export enum ViewState {

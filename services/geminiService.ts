@@ -47,6 +47,7 @@ export const findScholarshipsAI = async (
 ): Promise<Scholarship[]> => {
   try {
     const prompt = `List 4 top scholarships for a Rwandan student wishing to study ${level} in ${field} in ${country}. 
+    For each scholarship, specifically identify the 'country' where it applies and categorize the 'fundingType' as either 'Full' or 'Partial'.
     Return the data in strict JSON format.`;
 
     const response = await ai.models.generateContent({
@@ -66,8 +67,10 @@ export const findScholarshipsAI = async (
                 type: Type.ARRAY,
                 items: { type: Type.STRING }
               },
+              country: { type: Type.STRING },
+              fundingType: { type: Type.STRING, enum: ["Full", "Partial"] }
             },
-            required: ["name", "amount", "deadline", "requirements"]
+            required: ["name", "amount", "deadline", "requirements", "country", "fundingType"]
           }
         }
       }

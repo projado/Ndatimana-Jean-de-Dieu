@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, X, MessageSquare } from 'lucide-react';
+import { Send, Bot, X, MessageSquare } from 'lucide-react';
 import { chatWithConsultant } from '../services/geminiService';
 import { ChatMessage } from '../types';
 
@@ -70,15 +70,15 @@ export const AIConsultant: React.FC = () => {
       {/* Chat Window */}
       {isOpen && (
         <div className="bg-white w-[350px] md:w-[400px] h-[500px] rounded-2xl shadow-2xl flex flex-col mb-4 border border-slate-200 overflow-hidden">
-          {/* Header */}
-          <div className="bg-blue-600 p-4 text-white flex justify-between items-center">
+          {/* Header - Red Brick Theme */}
+          <div className="bg-red-900 p-4 text-white flex justify-between items-center">
             <div className="flex items-center gap-2">
               <div className="bg-white/20 p-2 rounded-full">
                 <Bot size={20} />
               </div>
               <div>
                 <h3 className="font-bold text-sm">Projado Assistant</h3>
-                <p className="text-xs text-blue-100">Online • AI Powered</p>
+                <p className="text-xs text-red-200">Online • AI Powered</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white">
@@ -96,7 +96,7 @@ export const AIConsultant: React.FC = () => {
                 <div
                   className={`max-w-[80%] p-3 rounded-2xl text-sm shadow-sm ${
                     msg.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-none'
+                      ? 'bg-red-800 text-white rounded-br-none'
                       : 'bg-white text-slate-700 border border-slate-200 rounded-bl-none'
                   }`}
                 >
@@ -107,9 +107,9 @@ export const AIConsultant: React.FC = () => {
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-white p-3 rounded-2xl rounded-bl-none border border-slate-200 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
               </div>
             )}
@@ -125,12 +125,12 @@ export const AIConsultant: React.FC = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder="Ask about visas, universities..."
-                className="flex-1 p-2 bg-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border-none"
+                className="flex-1 p-2 bg-slate-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-800 border-none"
               />
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="bg-red-800 text-white p-2 rounded-lg hover:bg-red-900 disabled:opacity-50 transition-colors"
               >
                 <Send size={18} />
               </button>
@@ -139,11 +139,11 @@ export const AIConsultant: React.FC = () => {
         </div>
       )}
 
-      {/* Toggle Button */}
+      {/* Toggle Button - Red Brick */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-110 flex items-center gap-2 font-semibold"
+          className="bg-red-900 hover:bg-red-950 text-white p-4 rounded-full shadow-lg shadow-red-900/30 transition-transform hover:scale-110 flex items-center gap-2 font-semibold"
         >
           <MessageSquare size={24} />
           <span className="hidden md:inline">Ask Projado AI</span>
