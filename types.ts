@@ -49,6 +49,7 @@ export interface SATQuestion {
   explanation: string;
   topic: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
+  visualAidPrompt?: string; // Description for generating a diagram if needed
 }
 
 export interface TestConfig {
@@ -58,11 +59,23 @@ export interface TestConfig {
   difficulty?: 'Easy' | 'Hard'; // For Module 2 adaptive
 }
 
+export interface EssayAnalysis {
+  overallScore: number;
+  strengths: string[];
+  weaknesses: string[];
+  aiProbability: number; // 0-100
+  suggestions: string;
+  improvedSnippet: string;
+  tone: string;
+  humanizeTip: string; // Specific advice to sound more human
+}
+
 export enum ViewState {
   HOME = 'HOME',
   SCHOLARSHIPS = 'SCHOLARSHIPS',
   DESTINATIONS = 'DESTINATIONS',
   CONTACT = 'CONTACT',
   VIDEO = 'VIDEO',
-  SAT_PREP = 'SAT_PREP'
+  SAT_PREP = 'SAT_PREP',
+  ESSAY_REVIEW = 'ESSAY_REVIEW'
 }
