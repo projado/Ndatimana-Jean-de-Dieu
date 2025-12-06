@@ -1,17 +1,16 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { Scholarship, VisaDetails, SATQuestion, TestConfig, EssayAnalysis } from "../types";
+import { Scholarship, VisaDetails, SATQuestion, TestConfig, EssayAnalysis, DuolingoQuestion } from "../types";
 
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const SYSTEM_INSTRUCTION = `
 You are Projado Edu's expert educational consultant AI. 
 Your target audience is students and professionals from Rwanda who want to study abroad.
 You are helpful, encouraging, and knowledgeable about international education systems (USA, Canada, UK, China, Europe, Australia).
+CURRENT CONTEXT: Focus on the 2025-2026 academic year. Provide advice relevant for upcoming intakes in 2025 and beyond.
 
 Key responsibilities:
-1. Guide users on university applications, visa processes (specifically for Rwandan citizens), and standardized tests (IELTS, TOEFL, GRE, SAT).
+1. Guide users on university applications, visa processes (specifically for Rwandan citizens), and standardized tests (IELTS, TOEFL, GRE, SAT, Duolingo English Test).
 2. Provide information on scholarships available for African/Rwandan students (e.g., Chevening, Fulbright, MasterCard Foundation, CAS-TWAS for China).
 3. Be realistic about costs and proof of funds requirements.
 4. Always maintain a professional yet warm tone.
@@ -54,7 +53,8 @@ export const findScholarshipsAI = async (
   country: string
 ): Promise<Scholarship[]> => {
   try {
-    const prompt = `List 4 top scholarships for a Rwandan student wishing to study ${level} in ${field} in ${country}. 
+    const prompt = `List 4 top scholarships for a Rwandan student wishing to study ${level} in ${field} in ${country} for the 2025-2026 academic year or later. 
+    Prioritize opportunities with applications open for 2025/2026 intakes.
     For each scholarship, specifically identify the 'country' where it applies, categorize the 'fundingType' as either 'Full' or 'Partial', and provide the official website URL in the 'link' field if available.
     Return the data in strict JSON format.`;
 
@@ -96,7 +96,7 @@ export const findScholarshipsAI = async (
 
 export const findVisaRequirementsAI = async (country: string): Promise<VisaDetails | null> => {
   try {
-    const prompt = `Provide detailed student visa requirements for a Rwandan citizen planning to study in ${country}.
+    const prompt = `Provide detailed student visa requirements for a Rwandan citizen planning to study in ${country} for 2025.
     Include the specific Visa Name (e.g. F1, Tier 4), typical application fee in local currency or USD, processing time, specific financial proof amounts required (Proof of Funds), 
     a list of required documents (passport, photos, admission letter, police clearance from Irembo, etc), where the embassy or application center is located in Rwanda (or nearest), and any health requirements (yellow fever, medical exam).
     Return the data in strict JSON format.`;
@@ -191,7 +191,7 @@ export const generateDiagram = async (description: string): Promise<string | nul
 export const analyzeEssay = async (essay: string): Promise<EssayAnalysis | null> => {
   try {
     const prompt = `
-    Act as an expert college admissions counselor (Ivy League standard).
+    Act as an expert college admissions counselor (Ivy League standard) and AI content detector.
     Analyze the following college application essay / personal statement.
     
     ESSAY CONTENT:
@@ -201,11 +201,12 @@ export const analyzeEssay = async (essay: string): Promise<EssayAnalysis | null>
     1. 'overallScore': Number 1-10 based on impact, unique voice, and clarity.
     2. 'strengths': Array of 3-4 strings listing key strong points.
     3. 'weaknesses': Array of 3-4 strings listing areas for improvement.
-    4. 'aiProbability': Number 0-100 estimating how likely this text appears AI-generated (based on generic phrasing, lack of personal anecdote, perfect but soulless grammar).
-    5. 'suggestions': A paragraph of actionable advice to improve the essay.
-    6. 'improvedSnippet': Rewrite the weakest sentence or paragraph to show how it could be better.
-    7. 'tone': One or two words describing the tone (e.g. "Confident but Generic", "Emotional and Raw").
-    8. 'humanizeTip': A specific, creative tip to make the essay sound more human and less robotic (e.g. "Share a specific memory involving a smell or sound," "Be more vulnerable about your failure").
+    4. 'aiProbability': Number 0-100 estimating how likely this text appears AI-generated.
+    5. 'aiExplanation': A brief, specific explanation (max 30 words) justifying the probability score (e.g. "Overuse of 'In conclusion', lack of personal anecdotes" or "Authentic voice with specific, imperfect details").
+    6. 'suggestions': A paragraph of actionable advice to improve the essay.
+    7. 'improvedSnippet': Rewrite the weakest sentence or paragraph to show how it could be better.
+    8. 'tone': One or two words describing the tone (e.g. "Confident but Generic", "Emotional and Raw").
+    9. 'humanizeTip': A specific, creative tip to make the essay sound more human and less robotic (e.g. "Share a specific memory involving a smell or sound," "Be more vulnerable about your failure").
 
     Return ONLY JSON.
     `;
@@ -222,12 +223,13 @@ export const analyzeEssay = async (essay: string): Promise<EssayAnalysis | null>
             strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
             weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } },
             aiProbability: { type: Type.NUMBER },
+            aiExplanation: { type: Type.STRING },
             suggestions: { type: Type.STRING },
             improvedSnippet: { type: Type.STRING },
             tone: { type: Type.STRING },
             humanizeTip: { type: Type.STRING }
           },
-          required: ["overallScore", "strengths", "weaknesses", "aiProbability", "suggestions", "improvedSnippet", "tone", "humanizeTip"]
+          required: ["overallScore", "strengths", "weaknesses", "aiProbability", "aiExplanation", "suggestions", "improvedSnippet", "tone", "humanizeTip"]
         }
       }
     });
@@ -307,12 +309,9 @@ export const generateSATPracticeSet = async (
   requestedCount: number // Ignored in favor of optimized batches
 ): Promise<SATQuestion[]> => {
   try {
-    // 1. Define Batches based on Bluebook Structure for Parallel Execution
-    // This increases speed by ~5x-10x compared to sequential generation
     let batches = [];
 
     if (config.section === 'ReadingWriting') {
-      // RW Structure: 27 Questions
       batches = [
         { count: 5, instructions: "Words in Context (Vocabulary). Short text, fill in blank." },
         { count: 6, instructions: "Craft and Structure (Text Structure, Purpose, Cross-Text Connections)." },
@@ -321,7 +320,6 @@ export const generateSATPracticeSet = async (
         { count: 4, instructions: "Expression of Ideas (Rhetorical Synthesis / Student Notes)." }
       ];
     } else {
-      // Math Structure: 22 Questions
       batches = [
         { count: 6, instructions: "Algebra (Linear equations, systems, inequalities)." },
         { count: 6, instructions: "Advanced Math (Nonlinear functions, quadratics, exponential)." },
@@ -330,7 +328,6 @@ export const generateSATPracticeSet = async (
       ];
     }
 
-    // 2. Execute all batches in parallel
     let currentOffset = 0;
     const promises = batches.map(batch => {
        const p = generateSATBatch(batch.instructions, config, batch.count, currentOffset);
@@ -340,17 +337,92 @@ export const generateSATPracticeSet = async (
 
     const results = await Promise.all(promises);
     
-    // 3. Flatten and re-index results
     const allQuestions = results.flat().map((q, idx) => ({
         ...q,
         id: `${config.section}-${config.module}-${Date.now()}-${idx}`,
-        correctAnswerIndex: Math.max(0, Math.min(3, q.correctAnswerIndex)) // Safety clamp
+        correctAnswerIndex: Math.max(0, Math.min(3, q.correctAnswerIndex))
     }));
 
-    // Ensure we have at least some questions even if partial failure
     return allQuestions.length > 0 ? allQuestions : [];
   } catch (error) {
     console.error("SAT Gen Error:", error);
+    return [];
+  }
+};
+
+export const generateDuolingoSet = async (): Promise<DuolingoQuestion[]> => {
+  try {
+    const prompt = `Generate a rigorous Duolingo English Test (DET) practice set with 3 distinct tasks.
+    
+    Task 1: 'read_select' (Vocabulary). Provide 18 words: 9 valid academic English words, 9 "pseudowords" (fake but look real).
+    Task 2: 'read_complete' (C-Test). A coherent paragraph (approx 50 words) about a general topic (science, history, or culture). 
+    Task 3: 'photo_writing' (Descriptive Writing). A concise prompt describing a scene (e.g., "A busy street market with colorful stalls").
+    
+    Return strict JSON.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              id: { type: Type.STRING },
+              type: { type: Type.STRING, enum: ['read_select', 'read_complete', 'photo_writing'] },
+              prompt: { type: Type.STRING },
+              timeLimit: { type: Type.INTEGER },
+              words: { 
+                 type: Type.ARRAY, 
+                 items: {
+                   type: Type.OBJECT,
+                   properties: {
+                     text: { type: Type.STRING },
+                     isReal: { type: Type.BOOLEAN }
+                   },
+                   required: ["text", "isReal"]
+                 }
+              },
+              passage: { type: Type.STRING, description: "Full correct text for read_complete" },
+              imageDescription: { type: Type.STRING, description: "Prompt for image generation" }
+            },
+            required: ["id", "type", "prompt", "timeLimit"]
+          }
+        }
+      }
+    });
+
+    const text = response.text;
+    if (!text) return [];
+    
+    const questions = JSON.parse(text) as DuolingoQuestion[];
+
+    // Post-process to add Image for writing task
+    const processedQuestions = await Promise.all(questions.map(async (q) => {
+        if (q.type === 'photo_writing' && q.imageDescription) {
+            try {
+                const freshAi = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                const imgRes = await freshAi.models.generateImages({
+                    model: 'imagen-4.0-generate-001',
+                    prompt: q.imageDescription + ", photorealistic, high quality, everyday scene",
+                    config: { numberOfImages: 1, aspectRatio: '4:3', outputMimeType: 'image/jpeg' }
+                });
+                const b64 = imgRes.generatedImages?.[0]?.image?.imageBytes;
+                if (b64) {
+                    return { ...q, imageUrl: `data:image/jpeg;base64,${b64}` };
+                }
+            } catch (e) {
+                console.error("Image Gen Error", e);
+            }
+        }
+        return q;
+    }));
+
+    return processedQuestions;
+  } catch (error) {
+    console.error("Duolingo Gen Error:", error);
     return [];
   }
 };

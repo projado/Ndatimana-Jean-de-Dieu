@@ -1,4 +1,6 @@
+
 import React from 'react';
+import '../types';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline';

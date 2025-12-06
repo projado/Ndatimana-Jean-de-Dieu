@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Video, Loader2, Sparkles, AlertCircle, Play } from 'lucide-react';
 import { Button } from './Button';
 import { generateCampusVideo } from '../services/geminiService';
+import '../types';
 
 export const CampusVideo: React.FC = () => {
   const [prompt, setPrompt] = useState('');

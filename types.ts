@@ -1,4 +1,6 @@
+import React from 'react';
 
+// Common interfaces
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
@@ -38,6 +40,7 @@ export interface VisaDetails {
   documents: string[];
   embassyLocation: string;
   healthRequirements: string;
+  visaLink?: string;
 }
 
 export interface SATQuestion {
@@ -64,10 +67,28 @@ export interface EssayAnalysis {
   strengths: string[];
   weaknesses: string[];
   aiProbability: number; // 0-100
+  aiExplanation: string; // Brief reasoning for the score
   suggestions: string;
   improvedSnippet: string;
   tone: string;
   humanizeTip: string; // Specific advice to sound more human
+}
+
+export interface DuolingoQuestion {
+  id: string;
+  type: 'read_select' | 'read_complete' | 'photo_writing';
+  prompt: string;
+  timeLimit: number; // Seconds
+  
+  // For Read and Select
+  words?: { text: string; isReal: boolean }[];
+  
+  // For Read and Complete
+  passage?: string; // The full correct text
+  
+  // For Photo Writing
+  imageDescription?: string; // Prompt used to generate image
+  imageUrl?: string; // Base64 image
 }
 
 export enum ViewState {
@@ -77,5 +98,6 @@ export enum ViewState {
   CONTACT = 'CONTACT',
   VIDEO = 'VIDEO',
   SAT_PREP = 'SAT_PREP',
-  ESSAY_REVIEW = 'ESSAY_REVIEW'
+  ESSAY_REVIEW = 'ESSAY_REVIEW',
+  DUOLINGO_PREP = 'DUOLINGO_PREP'
 }

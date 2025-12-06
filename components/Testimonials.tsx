@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { Quote, MapPin } from 'lucide-react';
+import '../types';
 
 const testimonials = [
   {

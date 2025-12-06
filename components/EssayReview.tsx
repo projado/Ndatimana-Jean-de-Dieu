@@ -98,7 +98,7 @@ export const EssayReview: React.FC = () => {
                   {/* Scores Card */}
                   <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+                        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl text-center border border-slate-100 dark:border-slate-700 flex flex-col justify-center">
                            <p className="text-xs font-bold uppercase text-slate-500 mb-1">Overall Score</p>
                            <div className={`text-4xl font-extrabold ${
                              analysis.overallScore >= 8 ? 'text-green-500' : analysis.overallScore >= 5 ? 'text-amber-500' : 'text-red-500'
@@ -106,14 +106,25 @@ export const EssayReview: React.FC = () => {
                              {analysis.overallScore}/10
                            </div>
                         </div>
-                        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl text-center border border-slate-100 dark:border-slate-700">
+                        <div className="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl text-center border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center">
                            <p className="text-xs font-bold uppercase text-slate-500 mb-1 flex items-center justify-center gap-1"><Bot size={12}/> AI Likelihood</p>
-                           <div className={`text-4xl font-extrabold ${
+                           <div className={`text-4xl font-extrabold mb-2 ${
                              analysis.aiProbability < 30 ? 'text-green-500' : analysis.aiProbability < 70 ? 'text-amber-500' : 'text-red-500'
                            }`}>
                              {analysis.aiProbability}%
                            </div>
-                           <p className="text-[10px] text-slate-400 mt-1">Estimated Probability</p>
+                           {analysis.aiExplanation && (
+                              <div className={`text-[10px] px-2 py-1.5 rounded w-full border text-left leading-tight ${
+                                  analysis.aiProbability < 30 
+                                    ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800'
+                                    : analysis.aiProbability < 70
+                                    ? 'bg-amber-100 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800'
+                                    : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-200 border-red-200 dark:border-red-800'
+                              }`}>
+                                 <span className="font-bold opacity-80 block mb-0.5">Why?</span>
+                                 {analysis.aiExplanation}
+                              </div>
+                           )}
                         </div>
                      </div>
                      <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">

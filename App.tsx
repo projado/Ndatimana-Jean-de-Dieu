@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Globe, Book, GraduationCap, Phone, Mail, Facebook, Instagram, Award, Users, CheckCircle2, File, ChevronRight, MapPin, Plus, Minus, ArrowRight, Star, Moon, Sun, Youtube, Landmark, Video, Trophy, FileText } from 'lucide-react';
+import { Menu, X, Globe, Book, GraduationCap, Phone, Mail, Facebook, Instagram, Award, Users, CheckCircle2, File, ChevronRight, MapPin, Plus, Minus, ArrowRight, Star, Moon, Sun, Youtube, Landmark, Video, Trophy, FileText, Bird } from 'lucide-react';
 import { ViewState } from './types';
 import { AIConsultant } from './components/AIConsultant';
 import { ScholarshipFinder } from './components/ScholarshipFinder';
@@ -9,45 +9,42 @@ import { Testimonials } from './components/Testimonials';
 import { CampusVideo } from './components/CampusVideo';
 import { SATPrep } from './components/SATPrep';
 import { EssayReview } from './components/EssayReview';
+import { DuolingoPrep } from './components/DuolingoPrep';
 import { Button } from './components/Button';
+import { LanguageProvider, useLanguage } from './services/translationService';
+import { LanguageSelector } from './components/LanguageSelector';
 
-// Custom Brand Logo Component
+// Custom Brand Logo Component - "Champion Edition"
 const BrandLogo = ({ light = false }: { light?: boolean }) => (
   <div className="flex items-center gap-3 group cursor-pointer select-none">
-    <div className="relative w-11 h-11 flex-shrink-0">
-      {/* Decorative background shapes representing stack of books/bricks */}
-      <div className={`absolute inset-0 rounded-xl transform translate-x-1 translate-y-1 transition-transform group-hover:translate-x-2 group-hover:translate-y-2 ${light ? 'bg-red-500/30' : 'bg-indigo-200 dark:bg-indigo-900/50'}`}></div>
-      
-      {/* Main container */}
-      <div className={`relative w-full h-full rounded-xl shadow-lg overflow-hidden flex items-center justify-center border border-white/10 ${light ? 'bg-slate-800' : 'bg-gradient-to-br from-red-900 to-indigo-900'}`}>
-        
-        {/* Subtle shine effect */}
-        <div className="absolute -top-10 -left-10 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
-        
-        {/* Icon Composition */}
-        <div className="relative z-10 flex flex-col items-center">
-          <GraduationCap className="text-amber-400 w-6 h-6 -mb-1 drop-shadow-sm" strokeWidth={2} />
-          <div className="h-1 w-6 bg-white/20 rounded-full mt-1"></div>
+    <div className="relative w-12 h-12 flex-shrink-0">
+      {/* Outer Champion Ring */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-amber-300 via-yellow-500 to-amber-600 p-[2px] shadow-lg shadow-amber-500/20 group-hover:shadow-amber-500/40 transition-shadow">
+        <div className={`w-full h-full rounded-[10px] flex items-center justify-center overflow-hidden ${light ? 'bg-slate-900' : 'bg-slate-950'} relative`}>
+           {/* Inner Glow */}
+           <div className="absolute inset-0 bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors"></div>
+           <div className="relative z-10 flex flex-col items-center">
+              <GraduationCap className="text-amber-400 w-6 h-6 drop-shadow-md transform group-hover:scale-110 transition-transform" strokeWidth={2.5} />
+              <div className="w-8 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mt-1 opacity-80"></div>
+           </div>
         </div>
       </div>
-
-      {/* Accent badge indicating global reach */}
-      <div className="absolute -top-1 -right-1 bg-white dark:bg-slate-800 rounded-full p-0.5 shadow-sm z-20 ring-1 ring-slate-100 dark:ring-slate-700">
-        <div className="bg-blue-600 rounded-full p-0.5">
-           <Globe size={10} className="text-white" />
-        </div>
+      
+      {/* Floating Crown/Trophy Badge */}
+      <div className="absolute -top-3 -right-3 bg-gradient-to-b from-yellow-300 to-amber-600 rounded-full p-1.5 shadow-lg z-20 border-2 border-white dark:border-slate-900">
+         <Trophy size={10} className="text-white fill-white" />
       </div>
     </div>
     
     <div className="flex flex-col justify-center">
-      <span className={`text-xl font-extrabold leading-none tracking-tighter font-sans ${light ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+      <h1 className={`text-2xl font-black leading-none tracking-tighter font-sans bg-clip-text text-transparent ${light ? 'bg-gradient-to-r from-white via-slate-200 to-slate-400' : 'bg-gradient-to-r from-slate-900 via-slate-800 to-slate-600 dark:from-white dark:via-slate-200 dark:to-slate-400'}`}>
         PROJADO
-      </span>
-      <div className="flex items-center gap-1">
-        <div className={`h-[2px] w-3 rounded-full ${light ? 'bg-amber-400' : 'bg-indigo-600 dark:bg-indigo-400'}`}></div>
-        <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${light ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400'}`}>
-          Education
+      </h1>
+      <div className="flex items-center gap-1.5 mt-0.5">
+         <span className={`text-[9px] font-black tracking-[0.3em] uppercase ${light ? 'text-amber-400' : 'text-amber-600 dark:text-amber-400'} drop-shadow-sm`}>
+          EDUCATION
         </span>
+        <div className="h-px flex-1 bg-gradient-to-r from-amber-500 to-transparent opacity-50"></div>
       </div>
     </div>
   </div>
@@ -57,25 +54,25 @@ const UniversityCard = ({ name, location, domain }: { name: string, location: st
   const [imgError, setImgError] = useState(false);
   
   return (
-    <div className="mx-4 inline-flex items-center gap-3 px-5 py-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-300 group cursor-default min-w-[240px]">
-      <div className="w-12 h-12 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center border border-slate-100 dark:border-slate-700 p-2 group-hover:scale-105 transition-transform overflow-hidden">
+    <div className="mx-4 inline-flex items-center gap-4 px-5 py-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-300 group cursor-default min-w-[250px]">
+      <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center border border-slate-100 dark:border-slate-700 p-1 flex-shrink-0 shadow-inner overflow-hidden">
         {!imgError && domain ? (
           <img 
             src={`https://logo.clearbit.com/${domain}`} 
             alt={name}
-            className="w-full h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
             onError={() => setImgError(true)}
           />
         ) : (
-          <Landmark size={20} className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+          <Landmark size={24} className="text-slate-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
         )}
       </div>
       <div className="flex flex-col">
-        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-900 dark:group-hover:text-indigo-300 transition-colors font-serif leading-tight">
+        <span className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
           {name}
         </span>
-        <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1">
-          <MapPin size={10} className="text-indigo-400" /> {location}
+        <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide flex items-center gap-1 mt-0.5">
+          <MapPin size={10} className="text-red-500" /> {location}
         </span>
       </div>
     </div>
@@ -100,23 +97,26 @@ const PartnerTicker = () => {
   ];
 
   return (
-    <div className="bg-slate-100 dark:bg-slate-950 py-12 overflow-hidden border-b border-slate-200 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
-        <p className="text-xs font-extrabold text-slate-400 uppercase tracking-[0.2em] flex items-center justify-center gap-3">
-          <span className="h-px w-8 bg-slate-300 dark:bg-slate-700"></span>
-          Trusted by Top Institutions
-          <span className="h-px w-8 bg-slate-300 dark:bg-slate-700"></span>
+    <div className="bg-slate-50 dark:bg-slate-950 py-16 overflow-hidden border-b border-slate-200 dark:border-slate-800 relative">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 mb-10 text-center relative z-10">
+        <p className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] flex items-center justify-center gap-4">
+          <span className="h-0.5 w-12 bg-gradient-to-r from-transparent to-slate-300 dark:to-slate-700"></span>
+          Trusted by World-Class Institutions
+          <span className="h-0.5 w-12 bg-gradient-to-l from-transparent to-slate-300 dark:to-slate-700"></span>
         </p>
       </div>
       
-      <div className="flex whitespace-nowrap animate-marquee">
+      <div className="flex whitespace-nowrap animate-marquee relative z-10">
         {[...partners, ...partners, ...partners].map((partner, idx) => (
           <UniversityCard key={idx} {...partner} />
         ))}
       </div>
       <style>{`
         .animate-marquee {
-          animation: marquee 60s linear infinite;
+          animation: marquee 80s linear infinite;
         }
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -130,11 +130,12 @@ const PartnerTicker = () => {
   );
 };
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.HOME);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const [darkMode, setDarkMode] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (darkMode) {
@@ -145,12 +146,13 @@ const App: React.FC = () => {
   }, [darkMode]);
 
   const navItems = [
-    { label: 'Home', view: ViewState.HOME },
-    { label: 'Visas', view: ViewState.DESTINATIONS },
-    { label: 'Scholarships', view: ViewState.SCHOLARSHIPS },
-    { label: 'SAT Prep', view: ViewState.SAT_PREP },
-    { label: 'Essay Review', view: ViewState.ESSAY_REVIEW },
-    { label: 'AI Video', view: ViewState.VIDEO },
+    { label: t('nav.home'), view: ViewState.HOME },
+    { label: t('nav.visas'), view: ViewState.DESTINATIONS },
+    { label: t('nav.scholarships'), view: ViewState.SCHOLARSHIPS },
+    { label: t('nav.sat'), view: ViewState.SAT_PREP },
+    { label: t('nav.essay'), view: ViewState.ESSAY_REVIEW },
+    { label: t('nav.duolingo'), view: ViewState.DUOLINGO_PREP },
+    { label: t('nav.video'), view: ViewState.VIDEO },
   ];
 
   const features = [
@@ -195,6 +197,8 @@ const App: React.FC = () => {
         return <SATPrep />;
       case ViewState.ESSAY_REVIEW:
         return <EssayReview />;
+      case ViewState.DUOLINGO_PREP:
+        return <DuolingoPrep />;
       case ViewState.CONTACT:
         return (
           <div className="max-w-2xl mx-auto py-16 px-4">
@@ -245,23 +249,23 @@ const App: React.FC = () => {
                   <div className="lg:w-1/2">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-white text-sm font-semibold mb-6 border border-white/20 shadow-lg">
                       <Award size={16} className="text-amber-400" />
-                      <span>#1 Education Consultant in Rwanda</span>
+                      <span>{t('hero.badge')}</span>
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
-                      Build Your Future <br/>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-red-300 to-indigo-300">Beyond Borders.</span>
+                      {t('hero.title')} <br/>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-red-300 to-indigo-300">{t('hero.subtitle')}</span>
                     </h1>
                     <p className="text-xl text-slate-200 mb-8 font-light leading-relaxed max-w-lg">
-                      We don't just fill forms; we craft careers. Expert visa guidance, scholarship matching, and university placement for ambitious Rwandan students.
+                      {t('hero.description')}
                     </p>
                     <div className="flex flex-wrap gap-4">
                       <Button onClick={() => setCurrentView(ViewState.SCHOLARSHIPS)} variant="secondary" className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 border-none shadow-lg hover:shadow-amber-600/40">
                         <Users size={18} />
-                        Find Scholarships
+                        {t('hero.cta1')}
                       </Button>
-                      <Button onClick={() => setCurrentView(ViewState.ESSAY_REVIEW)} variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white hover:text-indigo-900 gap-2 backdrop-blur-sm">
-                        <FileText size={18} />
-                        Review Essay
+                      <Button onClick={() => setCurrentView(ViewState.DUOLINGO_PREP)} variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white hover:text-green-900 gap-2 backdrop-blur-sm">
+                        <Bird size={18} />
+                        {t('hero.cta2')}
                       </Button>
                     </div>
                   </div>
@@ -436,6 +440,8 @@ const App: React.FC = () => {
                 </button>
               ))}
               
+              <LanguageSelector />
+              
               {/* Dark Mode Toggle (Desktop) */}
               <button 
                 onClick={() => setDarkMode(!darkMode)}
@@ -446,12 +452,13 @@ const App: React.FC = () => {
               </button>
 
               <Button onClick={() => setCurrentView(ViewState.CONTACT)} variant="primary" className="py-2 px-6 text-sm rounded-full bg-red-800 hover:bg-red-900 dark:bg-red-700 dark:hover:bg-red-600 shadow-red-900/20 hover:shadow-red-900/40 border-none">
-                 Book Consultation
+                 {t('nav.book')}
                </Button>
             </div>
 
             {/* Mobile Menu Buttons */}
             <div className="flex items-center gap-4 md:hidden">
+               <LanguageSelector />
                <button 
                 onClick={() => setDarkMode(!darkMode)}
                 className="p-2 rounded-full text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors"
@@ -490,7 +497,7 @@ const App: React.FC = () => {
               <Button className="w-full bg-red-800 dark:bg-red-700 border-none" onClick={() => {
                 setCurrentView(ViewState.CONTACT);
                 setIsMobileMenuOpen(false);
-              }}>Book Consultation</Button>
+              }}>{t('nav.book')}</Button>
             </div>
           </div>
         )}
@@ -566,6 +573,14 @@ const App: React.FC = () => {
         </div>
       </footer>
     </div>
+  );
+}
+
+const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 };
 
